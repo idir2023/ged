@@ -28,13 +28,13 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    // public function index(Request $request)
-    // {
-    //     if (view()->exists('template.' . $request->path())) {
-    //         return view('template.' . $request->path());
-    //     }
-    //     return abort(404);
-    // }
+    public function index(Request $request)
+    {
+        if (view()->exists('template.' . $request->path())) {
+            return view('template.' . $request->path());
+        }
+        return abort(404);
+    }
     
     public function root()
     {

@@ -15,18 +15,14 @@
                             <span key="t-contact">@lang('sidebar.dashboard')</span>
                         </a>
                     </li>
-                
-                
-                  
-              
-                                 
-                    
-                    <li class="{{ request()->routeIs('contact.*') ? 'mm-active' : '' }}">
-                        <a href="{{ route('contact.index') }}" class="waves-effect">
-                            <i class="bx bx-envelope"></i>
-                            <span>@lang('Departement')</span>
+  
+                    <li class="{{ request()->routeIs('departements.*') ? 'mm-active' : '' }}">
+                        <a href="{{ route('departements.index') }}" class="waves-effect">
+                            <i class="bx bx-buildings"></i> <!-- Icône changé -->
+                            <span>@lang('Département')</span>
                         </a>
-                    </li>  
+                    </li>
+                    
                  
                     
                 @else

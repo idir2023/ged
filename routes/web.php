@@ -7,8 +7,9 @@ use App\Http\Controllers\Admin\{
       HomeController,
       ProfileController,
       ContactController,
-   };
-
+      DepartementController
+    };
+ 
    Route::get('/', function(){
     return view('auth.login');
    });
@@ -29,12 +30,16 @@ Route::group(["prefix" => 'dashboard'], function () {
             Route::get('/', [HomeController::class, 'root'])->name('root');
 
             //add user
-
             Route::get('/add-user', [ProfileController::class, 'addUser'])->name('add.user');
             Route::post('/store-user', [ProfileController::class, 'store'])->name('users.store');
   
             // CONTACT us
             Route::resource("contact", ContactController::class);
+
+            //departements
+
+            Route::resource('departements', DepartementController::class);
+            
  
         });
     });
