@@ -1,0 +1,42 @@
+# Laravel & PHP
+/vendor/
+*.log
+*.cache
+.env
+.env.*
+/node_modules/
+storage/*.key
+storage/oauth-private.key
+storage/oauth-public.key
+storage/logs/
+storage/framework/cache/*
+storage/framework/views/*
+storage/framework/sessions/*
+bootstrap/cache/
+
+# IDE & System files
+/.idea/
+/.vscode/
+.DS_Store
+Thumbs.db
+*.sublime-project
+*.sublime-workspace
+
+# Composer & NPM
+composer.phar
+/public/hot
+/public/storage
+/public/mix-manifest.json
+/public/css
+/public/js
+/public/build
+
+# Cache & Debugging files
+phpunit.xml
+phpunit.xml.cache
+debugbar/
+*.sql
+*.sqlite
+npm-debug.log
+yarn-error.log
+.pnpm-debug.log
