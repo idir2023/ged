@@ -8,8 +8,10 @@ use App\Http\Controllers\Admin\{
       ProfileController,
       ContactController,
       DepartementController,
-      ChefDeDepartementController
-    };
+      ChefDeDepartementController,
+      };
+      
+     use App\Http\Controllers\Admin\ZoneController;
 
 
    Route::get('/', function(){
@@ -45,7 +47,8 @@ Route::group(["prefix" => 'dashboard'], function () {
             
             Route::resource('chefdep', ChefDeDepartementController::class);
             
-            
+            Route::resource('zones', ZoneController::class);
+
  
         });
     });
