@@ -22,6 +22,12 @@
                             <span>@lang('Département')</span>
                         </a>
                     </li>
+                    <li class="{{ request()->routeIs('chefdep.*') ? 'mm-active' : '' }}">
+                        <a href="{{ route('chefdep.index') }}" class="waves-effect">
+                            <i class="bx bx-buildings"></i> <!-- Icône changé -->
+                            <span>@lang('chef de départements')</span>
+                        </a>
+                    </li>
                     
                  
                     

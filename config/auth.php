@@ -46,7 +46,12 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+        'chef' => [
+             'driver' => 'session',
+             'provider' => 'chefs',
+        ],
     ],
+
 
     /*
     |--------------------------------------------------------------------------
@@ -69,6 +74,10 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+        'chefs' => [
+              'driver' => 'eloquent',
+                'model' => App\Models\ChefDeDepartement::class,
         ],
 
         // 'users' => [

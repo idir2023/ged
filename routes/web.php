@@ -7,9 +7,11 @@ use App\Http\Controllers\Admin\{
       HomeController,
       ProfileController,
       ContactController,
-      DepartementController
+      DepartementController,
+      ChefDeDepartementController
     };
- 
+
+
    Route::get('/', function(){
     return view('auth.login');
    });
@@ -39,6 +41,10 @@ Route::group(["prefix" => 'dashboard'], function () {
             //departements
 
             Route::resource('departements', DepartementController::class);
+
+            
+            Route::resource('chefdep', ChefDeDepartementController::class);
+            
             
  
         });
