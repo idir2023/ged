@@ -9,30 +9,23 @@ class Zone extends Model
 {
     use HasFactory;
 
-    /**
-     * Nom de la table associée au modèle.
-     */
     protected $table = 'zones';
 
-    /**
-     * Les attributs qui peuvent être assignés en masse.
-     */
     protected $fillable = [
         'nom',
         'latitude',
         'longitude',
+        'coordinates',
+        'id_chef_zone',
+        'city',
+        'country',
     ];
 
     /**
-     * Formatage des valeurs avant enregistrement.
+     * Relation avec l'utilisateur (Chef de Zone)
      */
-    public function setLatitudeAttribute($value)
+    public function chefZone()
     {
-        $this->attributes['latitude'] = number_format($value, 8, '.', '');
-    }
-
-    public function setLongitudeAttribute($value)
-    {
-        $this->attributes['longitude'] = number_format($value, 8, '.', '');
+        return $this->belongsTo(User::class, 'id_chef_zone');
     }
 }

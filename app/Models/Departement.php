@@ -10,6 +10,17 @@ class Departement extends Model
     use HasFactory;
 
     protected $table = 'departements';
-    protected $primaryKey = 'id_dep';
-    protected $fillable = ['nom_dep'];
+
+    protected $fillable = [
+        'nom_dep',
+        'id_chef_departement',
+    ];
+
+    /**
+     * Relation avec l'utilisateur (Chef de Département)
+     */
+    public function chefDepartement()
+    {
+        return $this->belongsTo(User::class, 'id_chef_departement');
+    }
 }

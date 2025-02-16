@@ -11,36 +11,40 @@
                 @admin
                     <li>
                         <a href="{{ route('root') }}" class="waves-effect">
-                            <i class="bx bx-home-circle"></i>
+                            <i class="bx bx-home-circle"></i> <!-- Dashboard Icon -->
                             <span key="t-contact">@lang('sidebar.dashboard')</span>
                         </a>
                     </li>
   
                     <li class="{{ request()->routeIs('departements.*') ? 'mm-active' : '' }}">
                         <a href="{{ route('departements.index') }}" class="waves-effect">
-                            <i class="bx bx-buildings"></i> <!-- Icône changé -->
+                            <i class="bx bxs-building-house"></i> <!-- Department Icon -->
                             <span>@lang('Département')</span>
                         </a>
                     </li>
-                    <li class="{{ request()->routeIs('chefdep.*') ? 'mm-active' : '' }}">
-                        <a href="{{ route('chefdep.index') }}" class="waves-effect">
-                            <i class="bx bx-buildings"></i> <!-- Icône changé -->
-                            <span>@lang('chef de départements')</span>
+
+                    <li class="{{ request()->routeIs('zones.*') ? 'mm-active' : '' }}">
+                        <a href="{{ route('zones.index') }}" class="waves-effect">
+                            <i class="bx bx-map"></i> <!-- Zone Icon -->
+                            <span>@lang('Ma Zones')</span>
                         </a>
                     </li>
-                    
-                 
+
+                    <li class="{{ request()->routeIs('manage_users.*') ? 'mm-active' : '' }}">
+                        <a href="{{ route('manage_users.index') }}" class="waves-effect">
+                            <i class="bx bx-group"></i> <!-- Manage Users Icon -->
+                            <span>@lang('Manage Users')</span>
+                        </a>
+                    </li>
                     
                 @else
                     {{-- USER ROUTES  --}}
                     <li>
                         <a href="{{ route('profile') }}" class="waves-effect">
-                            <i class="bx bx-user-circle"></i>
+                            <i class="bx bx-user-circle"></i> <!-- Profile Icon -->
                             <span key="t-contact">@lang('sidebar.my_profile')</span>
                         </a>
                     </li>
-
-                
                 @endadmin
 
             </ul>

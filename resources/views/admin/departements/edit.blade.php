@@ -18,36 +18,44 @@
     @endcomponent
 
     <div class="row">
-        <div class="col-xl-12">
+        <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
-                    @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
-                    <form action="{{ route('departements.update', $departement->id_dep) }}" method="POST">
+                    <form action="{{ route('departements.update', $departement->id) }}" method="POST">
                         @csrf
                         @method('PUT')
 
-                        <div class="row mb-4">
-                            <label for="nom_dep" class="col-sm-3 col-form-label">@lang('Nom du Département')</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" id="nom_dep" name="nom_dep" value="{{ old('nom_dep', $departement->nom_dep) }}" required>
-                            </div>
+                        <div class="mb-3">
+                            <label for="nom_dep" class="form-label">@lang('Nom du Département')</label>
+                            <input type="text" name="nom_dep" id="nom_dep" class="form-control" value="{{ $departement->nom_dep }}" required>
                         </div>
 
-                        <div class="row justify-content-end">
-                            <div class="col-sm-9">
-                                <button type="submit" class="btn btn-warning">@lang('Mettre à Jour')</button>
-                                <a href="{{ route('departements.index') }}" class="btn btn-secondary">@lang('Annuler')</a>
-                            </div>
+                        {{-- <div class="mb-3">
+                            <label for="id_chef_departement" class="form-label">@lang('Chef de Département')</label>
+                            <select name="id_chef_departement" id="id_chef_departement" class="form-select">
+                                <option value="">@lang('Sélectionner un chef de département')</option>
+                                @foreach($users as $user)
+                                    <option value="{{ $user->id }}" {{ $departement->id_chef_departement == $user->id ? 'selected' : '' }}>
+                                        {{ $user->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div> --}}
+                        <div class="mb-3">
+                            <label for="id_chef_departement" class="form-label">@lang('Chef de Département')</label>
+                            <select name="id_chef_departement" id="id_chef_departement" class="form-select">
+                                <option value="">@lang('Sélectionner un chef de département')</option>
+                                @foreach($chefs_departement as $chef)
+                                    <option value="{{ $chef->id }}" {{ old('id_chef_departement', $departement->id_chef_departement) == $chef->id ? 'selected' : '' }}>
+                                        {{ $chef->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('id_chef_departement') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
+
+                        <button type="submit" class="btn btn-primary">@lang('Mettre à jour')</button>
+                        <a href="{{ route('departements.index') }}" class="btn btn-secondary">@lang('Annuler')</a>
                     </form>
                 </div>
             </div>

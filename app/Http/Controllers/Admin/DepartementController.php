@@ -4,22 +4,28 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
- 
 use App\Models\Departement;
+use App\Models\User;
 use Yajra\DataTables\Facades\DataTables;
+use Spatie\Permission\Models\Role;
 
- 
 class DepartementController extends Controller
 {
-     
+    /**
+     * Affiche la liste des départements avec DataTables.
+     */
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Departement::select(['id_dep', 'nom_dep']);
+            $data = Departement::with('chefDepartement')->select(['id', 'nom_dep', 'id_chef_departement']);
+
             return DataTables::of($data)
+                ->addColumn('chef', function ($row) {
+                    return $row->chefDepartement ? $row->chefDepartement->name : 'Non assigné';
+                })
                 ->addColumn('action', function ($row) {
-                    $editUrl = route('departements.edit', $row->id_dep);
-                    $deleteUrl = route('departements.destroy', $row->id_dep);
+                    $editUrl = route('departements.edit', $row->id);
+                    $deleteUrl = route('departements.destroy', $row->id);
                     return '
                         <a href="' . $editUrl . '" class="btn btn-warning btn-sm">Modifier</a>
                         <form action="' . $deleteUrl . '" method="POST" style="display:inline;">
@@ -32,20 +38,31 @@ class DepartementController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-    
+
         return view('admin.departements.index');
     }
-    
 
+    /**
+     * Affiche le formulaire de création d'un département.
+     */
+  
     public function create()
     {
-        return view('admin.departements.create');
+        // Fetch only users who have the role "chef_departement"
+        $chefs_departement = User::role('chef_departement')->get(); 
+    
+        return view('admin.departements.create', compact('chefs_departement'));
     }
+    
 
+    /**
+     * Enregistre un nouveau département.
+     */
     public function store(Request $request)
     {
         $request->validate([
-            'nom_dep' => 'required|string|max:255|unique:departements'
+            'nom_dep' => 'required|string|max:255|unique:departements,nom_dep',
+            'id_chef_departement' => 'nullable|exists:users,id',
         ]);
 
         Departement::create($request->all());
@@ -53,29 +70,39 @@ class DepartementController extends Controller
         return redirect()->route('departements.index')->with('success', 'Département ajouté avec succès.');
     }
 
-    public function edit($id_dep)
+    /**
+     * Affiche le formulaire d'édition d'un département.
+     */
+     
+    public function edit(Departement $departement)
     {
-        $departement = Departement::findOrFail($id_dep);
-        return view('admin.departements.edit', compact('departement'));
+        // Fetch only users who have the role "chef_departement"
+        $chefs_departement = User::role('chef_departement')->get(); 
+    
+        return view('admin.departements.edit', compact('departement', 'chefs_departement'));
     }
-
-    public function update(Request $request, $id_dep)
+    
+    /**
+     * Met à jour un département existant.
+     */
+    public function update(Request $request, Departement $departement)
     {
         $request->validate([
-            'nom_dep' => 'required|string|max:255|unique:departements,nom_dep,' . $id_dep . ',id_dep'
+            'nom_dep' => 'required|string|max:255|unique:departements,nom_dep,' . $departement->id,
+            'id_chef_departement' => 'nullable|exists:users,id',
         ]);
 
-        $departement = Departement::findOrFail($id_dep);
         $departement->update($request->all());
 
         return redirect()->route('departements.index')->with('success', 'Département mis à jour avec succès.');
     }
 
-    public function destroy($id_dep)
+    /**
+     * Supprime un département.
+     */
+    public function destroy(Departement $departement)
     {
-        $departement = Departement::findOrFail($id_dep);
         $departement->delete();
-
         return redirect()->route('departements.index')->with('success', 'Département supprimé avec succès.');
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\{
       ContactController,
       DepartementController,
       ChefDeDepartementController,
+      UserController
       };
       
      use App\Http\Controllers\Admin\ZoneController;
@@ -43,14 +44,10 @@ Route::group(["prefix" => 'dashboard'], function () {
             //departements
 
             Route::resource('departements', DepartementController::class);
-
-            
-            Route::resource('chefdep', ChefDeDepartementController::class);
-            
             Route::resource('zones', ZoneController::class);
+            Route::resource('manage_users', UserController::class);
 
- 
-        });
+         });
     });
 });
 

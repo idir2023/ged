@@ -31,17 +31,21 @@
                     <div class="d-flex justify-content-end mb-4" id="action_btns">
                         <a href="{{ route('zones.create') }}" class="btn btn-rounded btn-success waves-effect waves-light ms-2">
                             <i class="bx bx-plus font-size-16 me-2 align-middle"></i>
-                            @lang('translation.add_resource', ['resource' => __('Zone')])
+                            @lang('Ajouter une Zone')
                         </a>
                     </div>
-                    <table id="datatable" class="table-hover table-bordered nowrap w-100 table">
+
+                    <table id="datatable" class="table table-hover table-bordered nowrap w-100">
                         <thead class="table-light">
                             <tr>
                                 <th>#</th>
-                                <th> @lang('Nom de la Zone') </th>
-                                <th> @lang('Latitude') </th>
-                                <th> @lang('Longitude') </th>
-                                <th> @lang('Actions') </th>
+                                <th>@lang('Nom de la Zone')</th>
+                                <th>@lang('Latitude')</th>
+                                <th>@lang('Longitude')</th>
+                                <th>@lang('Ville')</th>
+                                <th>@lang('Pays')</th>
+                                <th>@lang('Chef de Zone')</th>
+                                <th>@lang('Actions')</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -58,9 +62,8 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
-    {{-- datatable init --}}
     <script type="text/javascript">
-        $(function() {
+        $(document).ready(function() {
             let table = $('#datatable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -68,30 +71,32 @@
                 lengthMenu: [10, 20, 50, 100],
                 pageLength: 10,
                 scrollX: true,
-                order: [
-                    [0, "desc"]
-                ],
+                order: [[0, "desc"]],
                 language: {
-                    search: "@lang('translation.search')",
-                    lengthMenu: "@lang('translation.lengthMenu1') _MENU_ @lang('translation.lengthMenu2')",
-                    processing: "@lang('translation.processing')",
-                    info: "@lang('translation.infoShowing') _START_ @lang('translation.infoTo') _END_ @lang('translation.infoOf') _TOTAL_ @lang('translation.infoEntries')",
-                    emptyTable: "@lang('translation.emptyTable')",
+                    search: "@lang('Rechercher')",
+                    lengthMenu: "@lang('Afficher') _MENU_ @lang('entrées')",
+                    processing: "@lang('Traitement en cours...')",
+                    info: "@lang('Affichage de') _START_ @lang('à') _END_ @lang('sur') _TOTAL_ @lang('entrées')",
+                    emptyTable: "@lang('Aucune donnée disponible')",
                     paginate: {
-                        "first": "@lang('translation.paginateFirst')",
-                        "last": "@lang('translation.paginateLast')",
-                        "next": "@lang('translation.paginateNext')",
-                        "previous": "@lang('translation.paginatePrevious')"
+                        first: "@lang('Premier')",
+                        last: "@lang('Dernier')",
+                        next: "@lang('Suivant')",
+                        previous: "@lang('Précédent')"
                     },
                 },
                 ajax: "{{ route('zones.index') }}",
                 columns: [
-                    { data: 'id' },
-                    { data: 'nom' },
-                    { data: 'latitude' },
-                    { data: 'longitude' },
+                    { data: 'id', name: 'id' },
+                    { data: 'nom', name: 'nom' },
+                    { data: 'latitude', name: 'latitude' },
+                    { data: 'longitude', name: 'longitude' },
+                    { data: 'city', name: 'city' },
+                    { data: 'country', name: 'country' },
+                    { data: 'chef_zone', name: 'chef_zone', orderable: false, searchable: false },
                     {
                         data: 'action',
+                        name: 'action',
                         orderable: false,
                         searchable: false
                     },
@@ -99,10 +104,12 @@
             });
 
             new $.fn.dataTable.Buttons(table, {
-                buttons: [{
-                    extend: 'colvis',
-                    text: "@lang('translation.colvisBtn')"
-                }]
+                buttons: [
+                    {
+                        extend: 'colvis',
+                        text: "@lang('Afficher/Masquer colonnes')"
+                    }
+                ]
             });
 
             table.buttons().container()

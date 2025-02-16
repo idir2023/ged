@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    @lang('Départements')
+    @lang('Gestion des Utilisateurs')
 @endsection
 
 @section('css')
@@ -12,13 +12,13 @@
 @section('content')
     @component('components.breadcrumb')
         @slot('li_1')
-            @lang('Départements')
+            @lang('Utilisateurs')
         @endslot
         @slot('li_2')
-            {{ route('departements.index') }}
+            {{ route('manage_users.index') }}
         @endslot
         @slot('title')
-            @lang('Gestion des Départements')
+            @lang('Gestion des Utilisateurs')
         @endslot
     @endcomponent
 
@@ -27,9 +27,9 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex justify-content-end mb-4" id="action_btns">
-                        <a href="{{ route('departements.create') }}" class="btn btn-rounded btn-success waves-effect waves-light ms-2">
+                        <a href="{{ route('manage_users.create') }}" class="btn btn-rounded btn-success waves-effect waves-light ms-2">
                             <i class="bx bx-plus font-size-16 me-2 align-middle"></i>
-                            @lang('Ajouter un Département')
+                            @lang('Ajouter un Utilisateur')
                         </a>
                     </div>
 
@@ -37,8 +37,10 @@
                         <thead class="table-light">
                             <tr>
                                 <th>#</th>
-                                <th>@lang('Nom du Département')</th>
-                                <th>@lang('Chef de Département')</th>
+                                <th>@lang('Photo')</th>
+                                <th>@lang('Nom')</th>
+                                <th>@lang('Email')</th>
+                                <th>@lang('Rôle')</th>
                                 <th>@lang('Actions')</th>
                             </tr>
                         </thead>
@@ -54,18 +56,19 @@
     <!-- Required datatable js -->
     <script src="{{ URL::asset('/assets/libs/datatables/datatables.min.js') }}"></script>
 
-    {{-- datatable init --}}
+    {{-- DataTable initialization --}}
     <script type="text/javascript">
         $(function() {
             let table = $('#datatable').DataTable({
                 processing: true,
                 serverSide: true,
+                responsive: true,
                 lengthChange: true,
                 lengthMenu: [10, 20, 50, 100],
                 pageLength: 10,
                 scrollX: true,
                 order: [[0, "desc"]],
-                
+
                 language: {
                     search: "@lang('Rechercher')",
                     lengthMenu: "@lang('Afficher') _MENU_ @lang('entrées')",
@@ -80,11 +83,18 @@
                     },
                 },
 
-                ajax: "{{ route('departements.index') }}",
+                ajax: "{{ route('manage_users.index') }}",
                 columns: [
                     { data: 'id', name: 'id' },
-                    { data: 'nom_dep', name: 'nom_dep' },
-                    { data: 'chef', name: 'chef', orderable: false, searchable: false },
+                    { 
+                        data: 'photo', 
+                        name: 'photo',
+                        orderable: false,
+                        searchable: false
+                    },
+                    { data: 'name', name: 'name' },
+                    { data: 'email', name: 'email' },
+                    { data: 'role', name: 'role' },
                     {
                         data: 'action',
                         name: 'action',
@@ -104,14 +114,14 @@
                 ]
             });
 
-            // Ajouter les boutons dans action_btns
+            // Add buttons to action_btns
             table.buttons().container()
                 .prependTo($('#action_btns'));
 
-            // Sélection de la taille d'affichage
+            // Select dropdown styling
             $('.dataTables_length select').addClass('form-select form-select-sm');
 
-            // Ajout de marges pour la pagination et l'information
+            // Add margin top to pagination and info
             $('.dataTables_info, .dataTables_paginate').addClass('mt-3');
         });
     </script>
