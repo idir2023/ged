@@ -11,28 +11,24 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
-        // Ensure roles exist before assigning them
-        $roles = ['admin', 'chef_zone', 'chef_departement', 'chef_projet', 'employee'];
-        foreach ($roles as $role) {
-            Role::firstOrCreate(['name' => $role]);
-        }
+        // Vérifier si le rôle "Super Admin" existe, sinon le créer
+        $adminRole = Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'web']);
 
-        // Create Admin User
-        $admin = User::firstOrCreate(
+        // Créer ou mettre à jour l'utilisateur Admin
+        $admin = User::updateOrCreate(
             [
                 "email" => "admin@airline.com",
             ],
             [
-                "name" => "Admin",
+                "name" => "Super Admin",
                 "phone" => '0123456789',
-                "is_admin" => true,
-                "password" => Hash::make("password"), // Secure password hashing
+                "password" => Hash::make("password"), // Hachage sécurisé
             ]
         );
 
-        // Assign "admin" role
-        if (!$admin->hasRole('admin')) {
-            $admin->assignRole('admin');
+        // Assigner le rôle "Super Admin" à l'utilisateur
+        if (!$admin->hasRole('Super Admin')) {
+            $admin->assignRole($adminRole);
         }
     }
 }

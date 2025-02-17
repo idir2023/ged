@@ -1,25 +1,23 @@
 @extends('layouts.master')
 
-@section('title')
-    @lang('Ajouter une Zone')
-@endsection
+@section('title', 'Ajouter une Zone')
 
 @section('css')
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 400px;
+            border-radius: 8px;
+        }
+    </style>
 @endsection
 
 @section('content')
     @component('components.breadcrumb')
-        @slot('li_1')
-            @lang('Zones')
-        @endslot
-        @slot('li_2')
-            {{ route('zones.index') }}
-        @endslot
-        @slot('title')
-            @lang('Ajouter une Zone')
-        @endslot
+        @slot('li_1', 'Zones')
+        @slot('li_2', route('zones.index'))
+        @slot('title', 'Ajouter une Zone')
     @endcomponent
 
     <div class="row">
@@ -30,58 +28,22 @@
                         @csrf
 
                         <div class="mb-3">
-                            <label for="nom" class="form-label">@lang('Nom de la Zone')</label>
-                            <input type="text" name="nom" id="nom" class="form-control" required>
+                            <label for="nom" class="form-label">Nom de la Zone</label>
+                            <input type="text" class="form-control" id="nom" name="nom" required>
                         </div>
 
                         <div class="mb-3">
-                            <label for="city" class="form-label">@lang('Ville')</label>
-                            <input type="text" name="city" id="city" class="form-control" readonly required>
+                            <label class="form-label">Sélectionner l'emplacement</label>
+                            <div id="map"></div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="country" class="form-label">@lang('Pays')</label>
-                            <input type="text" name="country" id="country" class="form-control" readonly required>
-                        </div>
+                        <input type="hidden" id="latitude" name="latitude" required>
+                        <input type="hidden" id="longitude" name="longitude" required>
+                        <input type="hidden" id="coordinates" name="coordinates">
+                        <input type="hidden" id="city" name="city">
+                        <input type="hidden" id="country" name="country">
 
-                        {{-- <div class="mb-3">
-                            <label for="id_chef_zone" class="form-label">@lang('Chef de Zone')</label>
-                            <select name="id_chef_zone" id="id_chef_zone" class="form-select">
-                                <option value="">@lang('Sélectionner un chef de zone')</option>
-                                @foreach ($users as $user)
-                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                @endforeach
-                            </select>
-                        </div> --}}
-                        <div class="mb-3">
-                            <label for="id_chef_zone" class="form-label">@lang('Chef de Zone')</label>
-                            <select name="id_chef_zone" id="id_chef_zone" class="form-select">
-                                <option value="">@lang('Sélectionner un chef de zone')</option>
-                                @foreach ($chefs_zone as $chef)
-                                    <option value="{{ $chef->id }}">{{ $chef->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-
-                        <div id="map" style="height: 400px;" class="mb-3"></div>
-
-                        <div class="mb-3">
-                            <label for="latitude" class="form-label">@lang('Latitude')</label>
-                            <input type="text" name="latitude" id="latitude" class="form-control" readonly required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="longitude" class="form-label">@lang('Longitude')</label>
-                            <input type="text" name="longitude" id="longitude" class="form-control" readonly required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="coordinates" class="form-label">@lang('Coordonnées')</label>
-                            <input type="text" name="coordinates" id="coordinates" class="form-control" readonly>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary">@lang('Enregistrer')</button>
+                        <button type="submit" class="btn btn-primary">Ajouter</button>
                     </form>
                 </div>
             </div>
@@ -94,50 +56,48 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
     <script>
-        var map = L.map('map').setView([33.5731, -7.5898], 6); // Maroc par défaut
+        document.addEventListener("DOMContentLoaded", function () {
+            var map = L.map('map').setView([33.5731, -7.5898], 6); // Maroc par défaut
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
 
-        var marker;
+            var marker = L.marker([33.5731, -7.5898], { draggable: true }).addTo(map);
 
-        // Fonction pour récupérer la ville et le pays depuis l'API Nominatim
-        function getCityCountry(lat, lng) {
-            var url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
-
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.address) {
-                        document.getElementById('city').value = data.address.city || data.address.town || data.address
-                            .village || '';
-                        document.getElementById('country').value = data.address.country || '';
-                    } else {
-                        document.getElementById('city').value = '';
-                        document.getElementById('country').value = '';
-                    }
-                })
-                .catch(error => console.error('Erreur lors de la récupération de la ville et du pays:', error));
-        }
-
-        // Gestion du clic sur la carte
-        map.on('click', function(e) {
-            var lat = e.latlng.lat;
-            var lng = e.latlng.lng;
-
-            if (marker) {
-                map.removeLayer(marker);
+            function updateLatLng(lat, lng) {
+                document.getElementById('latitude').value = lat.toFixed(6);
+                document.getElementById('longitude').value = lng.toFixed(6);
+                document.getElementById('coordinates').value = lat.toFixed(6) + ', ' + lng.toFixed(6);
+                fetchLocationDetails(lat, lng);
             }
 
-            marker = L.marker([lat, lng]).addTo(map);
+            marker.on('dragend', function (e) {
+                var latLng = marker.getLatLng();
+                updateLatLng(latLng.lat, latLng.lng);
+            });
 
-            document.getElementById('latitude').value = lat;
-            document.getElementById('longitude').value = lng;
-            document.getElementById('coordinates').value = lat + ', ' + lng;
+            map.on('click', function (e) {
+                marker.setLatLng(e.latlng);
+                updateLatLng(e.latlng.lat, e.latlng.lng);
+            });
 
-            // Appel de la fonction pour récupérer la ville et le pays
-            getCityCountry(lat, lng);
+            function fetchLocationDetails(lat, lng) {
+                var url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&addressdetails=1`;
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.address) {
+                            let city = data.address.city || data.address.town || data.address.village || '';
+                            let country = data.address.country || '';
+
+                            document.getElementById('city').value = city;
+                            document.getElementById('country').value = country;
+                        }
+                    })
+                    .catch(error => console.error('Erreur lors de la récupération des données:', error));
+            }
         });
     </script>
 @endsection

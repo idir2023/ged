@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0f18c6d9d9c88317601aa92fd4a74e82",
+    "content-hash": "ca93f37ea3647d3b0f428aada1379f55",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -7040,16 +7040,16 @@
             },
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-master": "10.x-dev"
-                },
                 "laravel": {
-                    "providers": [
-                        "Yajra\\DataTables\\DataTablesServiceProvider"
-                    ],
                     "aliases": {
                         "DataTables": "Yajra\\DataTables\\Facades\\DataTables"
-                    }
+                    },
+                    "providers": [
+                        "Yajra\\DataTables\\DataTablesServiceProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-master": "10.x-dev"
                 }
             },
             "autoload": {

@@ -85,7 +85,13 @@
                         previous: "@lang('Précédent')"
                     },
                 },
-                ajax: "{{ route('zones.index') }}",
+                ajax: {
+                    url: "{{ route('zones.index') }}",
+                    type: "GET",
+                    error: function(xhr, error, thrown) {
+                        console.log(xhr.responseText);
+                    }
+                },
                 columns: [
                     { data: 'id', name: 'id' },
                     { data: 'nom', name: 'nom' },

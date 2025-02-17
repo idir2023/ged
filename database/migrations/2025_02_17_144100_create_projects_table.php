@@ -6,15 +6,17 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up() {
-        Schema::create('departements', function (Blueprint $table) {
+        Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->foreignId('chef_id')->nullable()->constrained('users')->onDelete('set null'); // Chef de Département
+            $table->foreignId('zone_id')->constrained('zones')->onDelete('cascade'); // Lien avec Zone
+            $table->foreignId('chef_id')->nullable()->constrained('users')->onDelete('set null'); // Chef de Projet
             $table->timestamps();
         });
     }
 
     public function down() {
-        Schema::dropIfExists('departements');
+        Schema::dropIfExists('projects');
     }
 };
+

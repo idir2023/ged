@@ -1,39 +1,25 @@
-<?php
+<?php 
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Departement;
-use App\Models\User;
+use App\Models\Departement; // Vérifie que c'est bien le modèle correct
 use Yajra\DataTables\Facades\DataTables;
-use Spatie\Permission\Models\Role;
 
-class DepartementController extends Controller
-{
-    /**
-     * Affiche la liste des départements avec DataTables.
-     */
-    public function index(Request $request)
-    {
+class DepartementController extends Controller {
+    public function index(Request $request) {
         if ($request->ajax()) {
-            $data = Departement::with('chefDepartement')->select(['id', 'nom_dep', 'id_chef_departement']);
+            $departments = Departement::select('departements.*'); // Vérifie le bon modèle et nom de table
 
-            return DataTables::of($data)
-                ->addColumn('chef', function ($row) {
-                    return $row->chefDepartement ? $row->chefDepartement->name : 'Non assigné';
-                })
-                ->addColumn('action', function ($row) {
-                    $editUrl = route('departements.edit', $row->id);
-                    $deleteUrl = route('departements.destroy', $row->id);
+            return DataTables::of($departments)
+                ->addColumn('action', function ($department) {
                     return '
-                        <a href="' . $editUrl . '" class="btn btn-warning btn-sm">Modifier</a>
-                        <form action="' . $deleteUrl . '" method="POST" style="display:inline;">
-                            ' . csrf_field() . '
-                            ' . method_field("DELETE") . '
-                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Confirmer la suppression ?\')">Supprimer</button>
-                        </form>
-                    ';
+                        <a href="'.route('departements.edit', $department->id).'" class="btn btn-sm btn-primary">Éditer</a>
+                        <form action="'.route('departements.destroy', $department->id).'" method="POST" class="d-inline">
+                            '.csrf_field().method_field('DELETE').'
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm(\'Supprimer ce département ?\')">Supprimer</button>
+                        </form>';
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -42,67 +28,43 @@ class DepartementController extends Controller
         return view('admin.departements.index');
     }
 
-    /**
-     * Affiche le formulaire de création d'un département.
-     */
-  
-    public function create()
-    {
-        // Fetch only users who have the role "chef_departement"
-        $chefs_departement = User::role('chef_departement')->get(); 
-    
-        return view('admin.departements.create', compact('chefs_departement'));
+    public function create() {
+        return view('admin.departements.create');
     }
-    
 
-    /**
-     * Enregistre un nouveau département.
-     */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $request->validate([
-            'nom_dep' => 'required|string|max:255|unique:departements,nom_dep',
-            'id_chef_departement' => 'nullable|exists:users,id',
+            'name' => 'required|string|max:255|unique:departements,name', // Vérifie la table correcte
         ]);
 
-        Departement::create($request->all());
+        Departement::create([
+            'name' => $request->name,
+        ]);
 
         return redirect()->route('departements.index')->with('success', 'Département ajouté avec succès.');
     }
 
-    /**
-     * Affiche le formulaire d'édition d'un département.
-     */
-     
-    public function edit(Departement $departement)
-    {
-        // Fetch only users who have the role "chef_departement"
-        $chefs_departement = User::role('chef_departement')->get(); 
-    
-        return view('admin.departements.edit', compact('departement', 'chefs_departement'));
+    public function edit(Departement $departement) {
+        return view('admin.departements.edit', compact('departement'));
     }
-    
-    /**
-     * Met à jour un département existant.
-     */
-    public function update(Request $request, Departement $departement)
-    {
+
+    public function update(Request $request, Departement $departement) {
+        // Validation des données
         $request->validate([
-            'nom_dep' => 'required|string|max:255|unique:departements,nom_dep,' . $departement->id,
-            'id_chef_departement' => 'nullable|exists:users,id',
+            'name' => 'required|string|max:255|unique:departements,name,'.$departement->id,
         ]);
-
-        $departement->update($request->all());
-
+    
+        // Mise à jour du département
+        $departement->update([
+            'name' => $request->name,
+        ]);
+    
         return redirect()->route('departements.index')->with('success', 'Département mis à jour avec succès.');
     }
+    
 
-    /**
-     * Supprime un département.
-     */
-    public function destroy(Departement $departement)
-    {
-        $departement->delete();
+    public function destroy(Departement $department) {
+        $department->delete();
         return redirect()->route('departements.index')->with('success', 'Département supprimé avec succès.');
     }
 }

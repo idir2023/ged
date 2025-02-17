@@ -8,8 +8,7 @@
             <!-- Left Menu Start -->
             <ul class="metismenu list-unstyled" id="side-menu">
 
-                @admin
-                    <li>
+                     <li>
                         <a href="{{ route('root') }}" class="waves-effect">
                             <i class="bx bx-home-circle"></i> <!-- Dashboard Icon -->
                             <span key="t-contact">@lang('sidebar.dashboard')</span>
@@ -37,16 +36,14 @@
                         </a>
                     </li>
                     
-                @else
-                    {{-- USER ROUTES  --}}
+                     {{-- USER ROUTES  --}}
                     <li>
                         <a href="{{ route('profile') }}" class="waves-effect">
                             <i class="bx bx-user-circle"></i> <!-- Profile Icon -->
                             <span key="t-contact">@lang('sidebar.my_profile')</span>
                         </a>
                     </li>
-                @endadmin
-
+ 
             </ul>
         </div>
         <!-- Sidebar -->

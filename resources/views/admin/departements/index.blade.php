@@ -38,7 +38,6 @@
                             <tr>
                                 <th>#</th>
                                 <th>@lang('Nom du Département')</th>
-                                <th>@lang('Chef de Département')</th>
                                 <th>@lang('Actions')</th>
                             </tr>
                         </thead>
@@ -46,22 +45,19 @@
                     </table>
                 </div>
             </div>
-        </div> <!-- end col -->
-    </div> <!-- end row -->
+        </div>
+    </div>
 @endsection
 
 @section('script')
-    <!-- Required datatable js -->
     <script src="{{ URL::asset('/assets/libs/datatables/datatables.min.js') }}"></script>
 
-    {{-- datatable init --}}
     <script type="text/javascript">
         $(function() {
             let table = $('#datatable').DataTable({
                 processing: true,
                 serverSide: true,
                 lengthChange: true,
-                lengthMenu: [10, 20, 50, 100],
                 pageLength: 10,
                 scrollX: true,
                 order: [[0, "desc"]],
@@ -83,8 +79,7 @@
                 ajax: "{{ route('departements.index') }}",
                 columns: [
                     { data: 'id', name: 'id' },
-                    { data: 'nom_dep', name: 'nom_dep' },
-                    { data: 'chef', name: 'chef', orderable: false, searchable: false },
+                    { data: 'name', name: 'name' },
                     {
                         data: 'action',
                         name: 'action',
@@ -93,26 +88,6 @@
                     },
                 ],
             });
-
-            // Init buttons
-            new $.fn.dataTable.Buttons(table, {
-                buttons: [
-                    {
-                        extend: 'colvis',
-                        text: "@lang('Afficher/Masquer colonnes')"
-                    }
-                ]
-            });
-
-            // Ajouter les boutons dans action_btns
-            table.buttons().container()
-                .prependTo($('#action_btns'));
-
-            // Sélection de la taille d'affichage
-            $('.dataTables_length select').addClass('form-select form-select-sm');
-
-            // Ajout de marges pour la pagination et l'information
-            $('.dataTables_info, .dataTables_paginate').addClass('mt-3');
         });
     </script>
 @endsection
