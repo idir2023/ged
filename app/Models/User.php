@@ -15,7 +15,7 @@ class User extends Authenticatable implements HasMedia
     use HasFactory, Notifiable, HasRoles, InteractsWithMedia; // Add InteractsWithMedia trait
 
     protected $fillable = [
-        'name', 'email', 'password', 'department_id', 'zone_id', 'project_id'
+        'name', 'email', 'password', 'departement_id', 'zone_id', 'project_id'
     ];
 
     protected $hidden = [
@@ -42,7 +42,7 @@ class User extends Authenticatable implements HasMedia
     // Relation avec le Département
     public function department()
     {
-        return $this->belongsTo(Departement::class, 'department_id');
+        return $this->belongsTo(Departement::class, 'departement_id');
     }
 
     // Relation avec la Zone

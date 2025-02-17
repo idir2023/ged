@@ -16,9 +16,15 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="d-flex justify-content-end mb-4">
+                    <div class="d-flex justify-content-end mb-4 gap-2">
                         <a href="{{ route('manage_users.create') }}" class="btn btn-rounded btn-success">
-                            <i class="bx bx-plus"></i> Ajouter un Utilisateur
+                            <i class="bx bx-plus"></i> Ajouter un VIP
+                        </a>
+                        <a href="{{ route('AddChefDepartement') }}" class="btn btn-rounded btn-primary">
+                            <i class="bx bx-plus"></i> Ajouter Chef de Département
+                        </a>
+                        <a href="{{ route('AddChefZone') }}" class="btn btn-rounded btn-info">
+                            <i class="bx bx-plus"></i> Ajouter Chef de Zone
                         </a>
                     </div>
 
@@ -28,24 +34,29 @@
                                 <th>#</th>
                                 <th>Nom</th>
                                 <th>Email</th>
+                                <th>Téléphone</th>
                                 <th>Rôle</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($users as $user)
+                            @foreach ($users as $user)
                                 <tr>
                                     <td>{{ $user->id }}</td>
                                     <td>{{ $user->name }}</td>
                                     <td>{{ $user->email }}</td>
+                                    <td>{{ $user->phone ?? 'Non renseigné' }}</td>
+
                                     <td>
                                         {{ $user->roles->pluck('name')->implode(', ') ?: 'Aucun rôle' }}
                                     </td>
                                     <td>
-                                        <a href="{{ route('manage_users.edit', $user->id) }}" class="btn btn-warning btn-sm">
+                                        <a href="{{ route('manage_users.edit', $user->id) }}"
+                                            class="btn btn-warning btn-sm">
                                             <i class="bx bx-edit"></i> Modifier
                                         </a>
-                                        <form action="{{ route('manage_users.destroy', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Confirmer la suppression ?')">
+                                        <form action="{{ route('manage_users.destroy', $user->id) }}" method="POST"
+                                            class="d-inline" onsubmit="return confirm('Confirmer la suppression ?')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm">

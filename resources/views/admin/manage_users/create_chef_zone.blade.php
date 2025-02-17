@@ -1,11 +1,11 @@
 @extends('layouts.master')
 
-@section('title', 'Ajouter un VIP')
+@section('title', 'Ajouter un Chef de Zone')
 
 @section('content')
     @component('components.breadcrumb')
         @slot('li_1', 'Utilisateurs')
-        @slot('title', 'Ajouter un VIP')
+        @slot('title', 'Ajouter Chef de Zone')
     @endcomponent
 
     <div class="row">
@@ -21,9 +21,9 @@
                     </div>
                 @endif
                 <div class="card-body">
-                    <h4 class="card-title">Créer un VIP</h4>
+                    <h4 class="card-title">Créer un Chef de Zone</h4>
 
-                    <form action="{{ route('manage_users.store') }}" method="POST">
+                    <form action="{{ route('StoreChefZone') }}" method="POST">
                         @csrf
 
                         <div class="mb-3">
@@ -44,6 +44,16 @@
                         <div class="mb-3">
                             <label for="password" class="form-label">Mot de Passe</label>
                             <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="zone_id" class="form-label">Zone</label>
+                            <select class="form-control" id="zone_id" name="zone_id" required>
+                                <option value="">Sélectionner une zone</option>
+                                @foreach ($zones as $zone)
+                                    <option value="{{ $zone->id }}">{{ $zone->nom }}</option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <button type="submit" class="btn btn-primary">Créer</button>

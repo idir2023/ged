@@ -39,8 +39,8 @@ class CreateUsersTable extends Migration
      */
     public function down() {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['department_id', 'zone_id', 'project_id']);
-            $table->dropColumn(['department_id', 'zone_id', 'project_id']);
+            $table->dropForeign(['departement_id', 'zone_id', 'project_id']);
+            $table->dropColumn(['departement_id', 'zone_id', 'project_id']);
         });
     }
 }

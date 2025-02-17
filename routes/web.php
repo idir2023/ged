@@ -40,7 +40,13 @@ Route::group(["prefix" => 'dashboard', "middleware" => ['auth']], function () {
         Route::get('/add-user', [ProfileController::class, 'addUser'])->name('add.user');
         Route::post('/store-user', [ProfileController::class, 'store'])->name('users.store');
         Route::resource('manage_users', UserController::class);
+        Route::get('/add_chef_departement', [UserController::class, 'AddChefDepartement'])->name('AddChefDepartement');
+        Route::get('/add_chef_zone', [UserController::class, 'AddChefZone'])->name('AddChefZone');
 
+        Route::post('/chef-departement', [UserController::class, 'StoreChefDepartement'])->name('StoreChefDepartement');
+        Route::post('/chef-zone', [UserController::class, 'StoreChefZone'])->name('StoreChefZone');
+ 
+         // reset_password
         // Gestion des contacts
         Route::resource("contact", ContactController::class);
 
