@@ -179,6 +179,38 @@ public function destroy($id)
     }
 }
 
+
+public function AddChefProjet()
+{
+    $projects = \App\Models\Project::all();
+    return view('admin.manage_users.create_chef_projet', compact('projects'));
+}
+
+public function StoreChefProjet(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|unique:users,email',
+        'phone' => 'required|string|max:20',
+        'password' => 'required|string|min:6'  ,
+        'project_id' => 'required|exists:projects,id',
+
+     ]);
+
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'phone' => $request->phone,
+        'password' => Hash::make($request->password),
+        'project_id' => $request->project_id,
+
+     ]);
+
+    $user->assignRole('Chef de Projet');
+
+    return redirect()->route('manage_users.index')->with('success', 'Chef de Projet ajouté avec succès.');
+}
+
  
 
 

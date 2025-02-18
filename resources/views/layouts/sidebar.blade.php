@@ -36,6 +36,14 @@
                         </a>
                     </li>
                     
+                    <li class="{{ request()->routeIs('projects.index') || request()->routeIs('projects.*') ? 'mm-active' : '' }}">
+                        <a href="{{ route('projects.index') }}" class="waves-effect">
+                            <i class="bx bx-folder-open"></i> <!-- Icône correcte pour les projets -->
+                            <span>@lang('Projects')</span>
+                        </a>
+                    </li>
+                    
+                    
                      {{-- USER ROUTES  --}}
                     <li>
                         <a href="{{ route('profile') }}" class="waves-effect">

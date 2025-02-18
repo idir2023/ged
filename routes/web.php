@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Route;
     DepartementController,
     ChefDeDepartementController,
     UserController,
-    ZoneController
+    ZoneController,
+    ProjectController
 };
 use Spatie\Permission\Models\Role;
 
@@ -45,6 +46,11 @@ Route::group(["prefix" => 'dashboard', "middleware" => ['auth']], function () {
 
         Route::post('/chef-departement', [UserController::class, 'StoreChefDepartement'])->name('StoreChefDepartement');
         Route::post('/chef-zone', [UserController::class, 'StoreChefZone'])->name('StoreChefZone');
+
+ 
+        Route::get('/chef-projet', [UserController::class, 'AddChefProjet'])->name('AddChefProjet');
+        Route::post('/chef-projet', [UserController::class, 'StoreChefProjet'])->name('StoreChefProjet');
+
  
          // reset_password
         // Gestion des contacts
@@ -53,6 +59,8 @@ Route::group(["prefix" => 'dashboard', "middleware" => ['auth']], function () {
         // Gestion des départements et des zones
         Route::resource('departements', DepartementController::class);
         Route::resource('zones', ZoneController::class);
+        Route::resource('projects', ProjectController::class);
+
     });
 
 });

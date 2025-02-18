@@ -17,14 +17,17 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex justify-content-end mb-4 gap-2">
-                        <a href="{{ route('manage_users.create') }}" class="btn btn-rounded btn-success">
+                        <a href="{{ route('manage_users.create') }}" class="btn btn-rounded btn-success btn-sm">
                             <i class="bx bx-plus"></i> Ajouter un VIP
                         </a>
-                        <a href="{{ route('AddChefDepartement') }}" class="btn btn-rounded btn-primary">
+                        <a href="{{ route('AddChefDepartement') }}" class="btn btn-rounded btn-primary btn-sm">
                             <i class="bx bx-plus"></i> Ajouter Chef de Département
                         </a>
-                        <a href="{{ route('AddChefZone') }}" class="btn btn-rounded btn-info">
+                        <a href="{{ route('AddChefZone') }}" class="btn btn-rounded btn-info btn-sm">
                             <i class="bx bx-plus"></i> Ajouter Chef de Zone
+                        </a>
+                        <a href="{{ route('AddChefProjet') }}" class="btn btn-rounded btn-danger btn-sm">
+                            <i class="bx bx-plus"></i> Ajouter Chef de Projet
                         </a>
                     </div>
 
@@ -51,11 +54,7 @@
                                         {{ $user->roles->pluck('name')->implode(', ') ?: 'Aucun rôle' }}
                                     </td>
                                     <td>
-                                        <a href="{{ route('manage_users.edit', $user->id) }}"
-                                            class="btn btn-warning btn-sm">
-                                            <i class="bx bx-edit"></i> Modifier
-                                        </a>
-                                        <form action="{{ route('manage_users.destroy', $user->id) }}" method="POST"
+                                         <form action="{{ route('manage_users.destroy', $user->id) }}" method="POST"
                                             class="d-inline" onsubmit="return confirm('Confirmer la suppression ?')">
                                             @csrf
                                             @method('DELETE')

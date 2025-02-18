@@ -5,20 +5,29 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Project extends Model {
+class Project extends Model
+{
     use HasFactory;
 
-    protected $fillable = ['name', 'zone_id', 'chef_id'];
+    protected $fillable = ['name', 'departement_id', 'latitude', 'longitude', 'zone_id', 'chef_id', 'created_by'];
 
-    public function zone() {
+    // Relation avec le département
+    public function departement()
+    {
+        return $this->belongsTo(Departement::class);
+    }
+
+    // Relation avec la zone
+    public function zone()
+    {
         return $this->belongsTo(Zone::class);
     }
 
-    public function chef() {
+    // Relation avec le chef de projet
+    public function chef()
+    {
         return $this->belongsTo(User::class, 'chef_id');
     }
 
-    public function employees() {
-        return $this->hasMany(User::class, 'project_id');
-    }
+   
 }

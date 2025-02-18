@@ -15,7 +15,7 @@ class User extends Authenticatable implements HasMedia
     use HasFactory, Notifiable, HasRoles, InteractsWithMedia; // Add InteractsWithMedia trait
 
     protected $fillable = [
-        'name', 'email', 'password', 'departement_id', 'zone_id', 'project_id'
+        'name', 'email', 'password','phone', 'departement_id', 'zone_id', 'project_id'
     ];
 
     protected $hidden = [
