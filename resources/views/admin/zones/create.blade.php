@@ -3,7 +3,6 @@
 @section('title', 'Ajouter une Zone')
 
 @section('css')
-    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
         #map {
@@ -50,15 +49,14 @@
         </div>
     </div>
 @endsection
-
 @section('script')
-    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var map = L.map('map').setView([33.5731, -7.5898], 6); // Maroc par défaut
-
+        $(document).ready(function () {
+            var map = L.map('map').setView([33.5731, -7.5898], 6);
+            
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
@@ -66,9 +64,9 @@
             var marker = L.marker([33.5731, -7.5898], { draggable: true }).addTo(map);
 
             function updateLatLng(lat, lng) {
-                document.getElementById('latitude').value = lat.toFixed(6);
-                document.getElementById('longitude').value = lng.toFixed(6);
-                document.getElementById('coordinates').value = lat.toFixed(6) + ', ' + lng.toFixed(6);
+                $('#latitude').val(lat.toFixed(6));
+                $('#longitude').val(lng.toFixed(6));
+                $('#coordinates').val(lat.toFixed(6) + ', ' + lng.toFixed(6));
                 fetchLocationDetails(lat, lng);
             }
 
@@ -85,18 +83,23 @@
             function fetchLocationDetails(lat, lng) {
                 var url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&addressdetails=1`;
 
-                fetch(url)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.address) {
-                            let city = data.address.city || data.address.town || data.address.village || '';
-                            let country = data.address.country || '';
+                $.getJSON(url, function (data) {
+                    if (data.address) {
+                        let city = data.address.city || data.address.town || data.address.village || '';
+                        let country = data.address.country || '';
+                        let zone = data.address.state || data.address.county || '';
 
-                            document.getElementById('city').value = city;
-                            document.getElementById('country').value = country;
+                        $('#city').val(city);
+                        $('#country').val(country);
+
+                        // Populate zone dropdown
+                        if (zone) {
+                            $('#zone').html(`<option value="${zone}" selected>${zone}</option>`);
                         }
-                    })
-                    .catch(error => console.error('Erreur lors de la récupération des données:', error));
+                    }
+                }).fail(function () {
+                    console.error('Error fetching location details.');
+                });
             }
         });
     </script>

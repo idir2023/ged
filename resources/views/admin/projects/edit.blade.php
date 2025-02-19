@@ -1,11 +1,11 @@
 @extends('layouts.master')
 
-@section('title', 'Ajouter un Projet')
+@section('title', 'Modifier un Projet')
 
 @section('content')
     @component('components.breadcrumb')
         @slot('li_1', 'Projets')
-        @slot('title', 'Ajouter un Projet')
+        @slot('title', 'Modifier un Projet')
     @endcomponent
 
     <div class="row">
@@ -21,14 +21,15 @@
                     </div>
                 @endif
                 <div class="card-body">
-                    <h4 class="card-title">Créer un Projet</h4>
+                    <h4 class="card-title">Modifier le Projet</h4>
 
-                    <form action="{{ route('projects.store') }}" method="POST">
+                    <form action="{{ route('projects.update', $project->id) }}" method="POST">
                         @csrf
+                        @method('PUT')
 
                         <div class="mb-3">
                             <label for="name" class="form-label">Nom du Projet</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $project->name) }}" required>
                         </div>
 
                         <div class="mb-3">
@@ -36,7 +37,9 @@
                             <select class="form-control" id="departement_id" name="departement_id">
                                 <option value="">Sélectionner un département</option>
                                 @foreach ($departements as $departement)
-                                    <option value="{{ $departement->id }}">{{ $departement->name }}</option>
+                                    <option value="{{ $departement->id }}" {{ $project->departement_id == $departement->id ? 'selected' : '' }}>
+                                        {{ $departement->name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -46,12 +49,14 @@
                             <select class="form-control" id="zone_id" name="zone_id" required>
                                 <option value="">Sélectionner une zone</option>
                                 @foreach ($zones as $zone)
-                                    <option value="{{ $zone->id }}">{{ $zone->nom }}</option>
+                                    <option value="{{ $zone->id }}" {{ $project->zone_id == $zone->id ? 'selected' : '' }}>
+                                        {{ $zone->nom }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
- 
-                         <button type="submit" class="btn btn-primary">Créer</button>
+
+                        <button type="submit" class="btn btn-primary">Mettre à Jour</button>
                         <a href="{{ route('projects.index') }}" class="btn btn-secondary">Annuler</a>
                     </form>
                 </div>

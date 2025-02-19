@@ -55,9 +55,7 @@ class ProjectController extends Controller
             'departement_id' => $request->departement_id,
             'zone_id' => $request->zone_id,
             'chef_id' => $request->chef_id,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-         ]);
+          ]);
 
         return redirect()->route('projects.index')->with('success', 'Projet ajouté avec succès.');
     }
@@ -75,7 +73,8 @@ class ProjectController extends Controller
 
         return view('admin.projects.edit', compact('project', 'departements', 'zones', 'chefs'));
     }
-
+ 
+ 
     /**
      * Mettre à jour un projet.
      */

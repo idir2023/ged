@@ -22,10 +22,14 @@ class ZoneController extends Controller {
                 })
                 ->addColumn('action', function ($zone) {
                     return '
-                        <a href="'.route('zones.edit', $zone->id).'" class="btn btn-sm btn-primary">Éditer</a>
+                        <a href="'.route('zones.edit', $zone->id).'" class="btn btn-sm btn-warning">
+                                <i class="bx bx-edit"></i> <!-- Edit icon -->
+                         </a>
                         <form action="'.route('zones.destroy', $zone->id).'" method="POST" class="d-inline">
                             '.csrf_field().method_field('DELETE').'
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm(\'Supprimer cette zone ?\')">Supprimer</button>
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm(\'Supprimer cette zone ?\')">
+                                        <i class="bx bx-trash"></i> <!-- Delete icon -->
+                             </button>
                         </form>';
                 })
                 ->rawColumns(['action'])

@@ -51,15 +51,33 @@
                                     <td>{{ $user->phone ?? 'Non renseigné' }}</td>
 
                                     <td>
-                                        {{ $user->roles->pluck('name')->implode(', ') ?: 'Aucun rôle' }}
+                                        @if ($user->roles->isNotEmpty())
+                                            @foreach ($user->roles as $role)
+                                                <span
+                                                    class="badge 
+                                                    @switch($role->name)
+                                                        @case('Super Admin') bg-danger @break
+                                                        @case('Chef de Département') bg-primary @break
+                                                        @case('Chef de Zone') bg-warning @break
+                                                        @case('Chef de Projet') bg-success @break
+                                                        @case('Employé') bg-secondary @break
+                                                        @default bg-light
+                                                    @endswitch">
+                                                    {{ $role->name }}
+                                                </span>
+                                            @endforeach
+                                        @else
+                                            <span class="badge bg-light text-dark">Aucun rôle</span>
+                                        @endif
                                     </td>
+
                                     <td>
-                                         <form action="{{ route('manage_users.destroy', $user->id) }}" method="POST"
+                                        <form action="{{ route('manage_users.destroy', $user->id) }}" method="POST"
                                             class="d-inline" onsubmit="return confirm('Confirmer la suppression ?')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm">
-                                                <i class="bx bx-trash"></i> Supprimer
+                                                <i class="bx bx-trash"></i>
                                             </button>
                                         </form>
                                     </td>

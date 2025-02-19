@@ -38,10 +38,14 @@
                                     <td>{{ $project->zone->nom }}</td>
                                     <td>{{ $project->chef->name ?? 'N/A' }}</td>
                                      <td>
-                                        <a href="{{ route('projects.edit', $project->id) }}" class="btn btn-warning btn-sm">Modifier</a>
+                                        <a href="{{ route('projects.edit', $project->id) }}" class="btn btn-warning btn-sm">
+                                            <i class="bx bx-edit"></i> <!-- Edit icon -->
+                                         </a>
                                         <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="d-inline">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="bx bx-trash"></i> <!-- Delete icon -->
+                                             </button>
                                         </form>
                                     </td>
                                 </tr>

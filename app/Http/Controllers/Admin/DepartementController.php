@@ -15,10 +15,14 @@ class DepartementController extends Controller {
             return DataTables::of($departments)
                 ->addColumn('action', function ($department) {
                     return '
-                        <a href="'.route('departements.edit', $department->id).'" class="btn btn-sm btn-primary">Éditer</a>
+                        <a href="'.route('departements.edit', $department->id).'" class="btn btn-sm btn-warning ">
+                                <i class="bx bx-edit"></i> <!-- Edit icon -->
+                         </a>
                         <form action="'.route('departements.destroy', $department->id).'" method="POST" class="d-inline">
                             '.csrf_field().method_field('DELETE').'
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm(\'Supprimer ce département ?\')">Supprimer</button>
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm(\'Supprimer ce département ?\')">
+                               <i class="bx bx-trash"></i> <!-- Delete icon -->
+                             </button>
                         </form>';
                 })
                 ->rawColumns(['action'])
