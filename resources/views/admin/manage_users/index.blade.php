@@ -16,21 +16,37 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
+                    
+                    <!-- Buttons Only Visible for Authorized Roles -->
+                    @can('manage users') 
                     <div class="d-flex justify-content-end mb-4 gap-2">
+                        @role('Super Admin|Chef de Département')
                         <a href="{{ route('manage_users.create') }}" class="btn btn-rounded btn-success btn-sm">
                             <i class="bx bx-plus"></i> Ajouter un VIP
                         </a>
+                        @endrole
+
+                        @role('Super Admin')
                         <a href="{{ route('AddChefDepartement') }}" class="btn btn-rounded btn-primary btn-sm">
                             <i class="bx bx-plus"></i> Ajouter Chef de Département
                         </a>
+                        @endrole
+
+                        @role('Super Admin|Chef de Département')
                         <a href="{{ route('AddChefZone') }}" class="btn btn-rounded btn-info btn-sm">
                             <i class="bx bx-plus"></i> Ajouter Chef de Zone
                         </a>
+                        @endrole
+
+                        @role('Super Admin|Chef de Zone')
                         <a href="{{ route('AddChefProjet') }}" class="btn btn-rounded btn-danger btn-sm">
                             <i class="bx bx-plus"></i> Ajouter Chef de Projet
                         </a>
+                        @endrole
                     </div>
+                    @endcan
 
+                    <!-- Users Table -->
                     <table class="table table-bordered w-100">
                         <thead class="table-light">
                             <tr>
@@ -50,11 +66,11 @@
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->phone ?? 'Non renseigné' }}</td>
 
+                                    <!-- Display Role Badges -->
                                     <td>
                                         @if ($user->roles->isNotEmpty())
                                             @foreach ($user->roles as $role)
-                                                <span
-                                                    class="badge 
+                                                <span class="badge 
                                                     @switch($role->name)
                                                         @case('Super Admin') bg-danger @break
                                                         @case('Chef de Département') bg-primary @break
@@ -71,7 +87,9 @@
                                         @endif
                                     </td>
 
+                                    <!-- Delete Button (Only for Admins) -->
                                     <td>
+                                        @can('manage users')
                                         <form action="{{ route('manage_users.destroy', $user->id) }}" method="POST"
                                             class="d-inline" onsubmit="return confirm('Confirmer la suppression ?')">
                                             @csrf
@@ -80,6 +98,7 @@
                                                 <i class="bx bx-trash"></i>
                                             </button>
                                         </form>
+                                        @endcan
                                     </td>
                                 </tr>
                             @endforeach
@@ -90,6 +109,7 @@
                     <div class="d-flex justify-content-center mt-3">
                         {{ $users->links() }}
                     </div>
+
                 </div>
             </div>
         </div>

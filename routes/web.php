@@ -2,18 +2,16 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
- use App\Http\Controllers\Admin\{
+use App\Http\Controllers\Admin\{
     HomeController,
     ProfileController,
     ContactController,
     DepartementController,
-    ChefDeDepartementController,
     UserController,
     ZoneController,
     ProjectController
 };
 use Spatie\Permission\Models\Role;
-
 
 // Redirection vers la page de login par défaut
 Route::get('/', function() {
@@ -23,43 +21,51 @@ Route::get('/', function() {
 // Routes d'authentification
 Auth::routes();
 
-// Dashboard
+// Dashboard Routes (Require Authentication)
 Route::group(["prefix" => 'dashboard', "middleware" => ['auth']], function () {
     
-    // Profile utilisateur
+    // Profile utilisateur (Accessible à tous les utilisateurs connectés)
     Route::get('/profile', [ProfileController::class, 'profile'])->name('profile');
     Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
     Route::post('/profile/update-password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
 
-    // Routes accessibles uniquement aux administrateurs
-    Route::group(['middleware' => ['role:Super Admin']], function () {
+    // 🌟 **Admin & Managers Only (Super Admin, Chef de Département, Chef de Zone)**
+    Route::group(['middleware' => ['role:Super Admin|Chef de Département|Chef de Zone']], function () {
         
         // Accueil Admin
         Route::get('/', [HomeController::class, 'root'])->name('root');
 
-        // Gestion des utilisateurs
-        Route::get('/add-user', [ProfileController::class, 'addUser'])->name('add.user');
-        Route::post('/store-user', [ProfileController::class, 'store'])->name('users.store');
-        Route::resource('manage_users', UserController::class);
-        Route::get('/add_chef_departement', [UserController::class, 'AddChefDepartement'])->name('AddChefDepartement');
-        Route::get('/add_chef_zone', [UserController::class, 'AddChefZone'])->name('AddChefZone');
+        // Gestion des utilisateurs (Super Admin & Chef de Département)
+        Route::group(['middleware' => ['role:Super Admin|Chef de Département']], function () {
+            Route::get('/add-user', [ProfileController::class, 'addUser'])->name('add.user');
+            Route::post('/store-user', [ProfileController::class, 'store'])->name('users.store');
+            Route::resource('manage_users', UserController::class);
+        });
 
-        Route::post('/chef-departement', [UserController::class, 'StoreChefDepartement'])->name('StoreChefDepartement');
-        Route::post('/chef-zone', [UserController::class, 'StoreChefZone'])->name('StoreChefZone');
+        // Ajouter des chefs (Super Admin only)
+        Route::group(['middleware' => ['role:Super Admin']], function () {
+            Route::get('/add_chef_departement', [UserController::class, 'AddChefDepartement'])->name('AddChefDepartement');
+            Route::get('/add_chef_zone', [UserController::class, 'AddChefZone'])->name('AddChefZone');
+            Route::get('/chef-projet', [UserController::class, 'AddChefProjet'])->name('AddChefProjet');
 
- 
-        Route::get('/chef-projet', [UserController::class, 'AddChefProjet'])->name('AddChefProjet');
-        Route::post('/chef-projet', [UserController::class, 'StoreChefProjet'])->name('StoreChefProjet');
+            Route::post('/chef-departement', [UserController::class, 'StoreChefDepartement'])->name('StoreChefDepartement');
+            Route::post('/chef-zone', [UserController::class, 'StoreChefZone'])->name('StoreChefZone');
+            Route::post('/chef-projet', [UserController::class, 'StoreChefProjet'])->name('StoreChefProjet');
+        });
 
- 
-         // reset_password
-        // Gestion des contacts
-        Route::resource("contact", ContactController::class);
+        // Gestion des contacts (Super Admin & Chef de Département)
+        Route::group(['middleware' => ['role:Super Admin|Chef de Département']], function () {
+            Route::resource("contact", ContactController::class);
+        });
 
-        // Gestion des départements et des zones
+        // Gestion des départements et des zones (Super Admin & Chef de Département & Chef de Zone)
         Route::resource('departements', DepartementController::class);
         Route::resource('zones', ZoneController::class);
-        Route::resource('projects', ProjectController::class);
+
+        // Gestion des projets (Accessible par les chefs de projet)
+        Route::group(['middleware' => ['role:Super Admin|Chef de Projet']], function () {
+            Route::resource('projects', ProjectController::class);
+        });
 
     });
 
@@ -74,6 +80,3 @@ Route::post('/delete-temp-file', [HomeController::class, 'deleteTempFile'])->nam
 
 // Sandbox: récupération d'un client aléatoire (pour tests)
 Route::get('/get-random-customer', [HomeController::class, 'randomCustomer'])->name('randomCustomer');
-
-// Catch-All Route pour éviter les erreurs 404 (Mettre en dernier pour ne pas interférer avec les autres routes)
-Route::get('/{any}', [HomeController::class, 'index'])->where('any', '.*')->name('index');
