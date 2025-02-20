@@ -5,8 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
  
  use App\Models\Project;
-use App\Models\Departement;
-use App\Models\Zone;
+ use App\Models\Zone;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,24 +15,43 @@ class ProjectController extends Controller
     /**
      * Afficher la liste des projets.
      */
-    public function index()
-    {
-        $projects = Project::with(['departement', 'zone', 'chef'])->paginate(10);
+    
+    public function index() {
+        $user = auth()->user(); // Get the authenticated user
+    
+        if ($user->hasRole('Super Admin')) {
+            // Super Admin sees all projects
+            $projects = Project::with(['zone', 'chefProjet'])->paginate(10);
+        } elseif ($user->hasRole('Chef de Zone')) {
+            // Chef de Zone sees only projects in their assigned zone
+            $projects = Project::with(['zone', 'chefProjet'])
+                        ->where('zone_id', $user->zone_id)
+                        ->paginate(10);
+        } elseif ($user->hasRole('Chef de Projet')) {
+            // Chef de Projet sees only the projects they manage
+            $projects = Project::with(['zone', 'chefProjet'])
+                        ->where('chef_projet_id', $user->id)
+                        ->paginate(10);
+        } else {
+            // Other users have no access
+            abort(403, 'Accès interdit.');
+        }
+    
         return view('admin.projects.index', compact('projects'));
     }
+    
 
     /**
      * Afficher le formulaire de création d'un projet.
      */
     public function create()
     {
-        $departements = Departement::all();
-        $zones = Zone::all();
+         $zones = Zone::all();
         $chefs = User::whereHas('roles', function ($query) {
             $query->where('name', 'chef_projet');
         })->get();
 
-        return view('admin.projects.create', compact('departements', 'zones', 'chefs'));
+        return view('admin.projects.create', compact(  'zones', 'chefs'));
     }
 
     /**
@@ -43,18 +61,15 @@ class ProjectController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:projects,name',
-            'departement_id' => 'nullable|exists:departements,id',
-            'zone_id' => 'required|exists:zones,id',
-            'chef_id' => 'nullable|exists:users,id',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
+             'zone_id' => 'required|exists:zones,id',
+            'chef_projet_id' => 'nullable|exists:users,id',
+        
         ]);
 
         Project::create([
             'name' => $request->name,
-            'departement_id' => $request->departement_id,
-            'zone_id' => $request->zone_id,
-            'chef_id' => $request->chef_id,
+             'zone_id' => $request->zone_id,
+            'chef_projet_id' => $request->chef_projet_id,
           ]);
 
         return redirect()->route('projects.index')->with('success', 'Projet ajouté avec succès.');
@@ -65,13 +80,12 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        $departements = Departement::all();
-        $zones = Zone::all();
+         $zones = Zone::all();
         $chefs = User::whereHas('roles', function ($query) {
             $query->where('name', 'chef_projet');
         })->get();
 
-        return view('admin.projects.edit', compact('project', 'departements', 'zones', 'chefs'));
+        return view('admin.projects.edit', compact('project' , 'zones', 'chefs'));
     }
  
  
@@ -82,11 +96,9 @@ class ProjectController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:projects,name,' . $project->id,
-            'departement_id' => 'nullable|exists:departements,id',
-            'zone_id' => 'required|exists:zones,id',
-            'chef_id' => 'nullable|exists:users,id',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
+             'zone_id' => 'required|exists:zones,id',
+            'chef_projet_id' => 'nullable|exists:users,id',
+            
         ]);
 
         $project->update($request->all());

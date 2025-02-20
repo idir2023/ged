@@ -31,15 +31,6 @@
                             <input type="text" class="form-control" id="name" name="name" required>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="departement_id" class="form-label">Département</label>
-                            <select class="form-control" id="departement_id" name="departement_id">
-                                <option value="">Sélectionner un département</option>
-                                @foreach ($departements as $departement)
-                                    <option value="{{ $departement->id }}">{{ $departement->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
 
                         <div class="mb-3">
                             <label for="zone_id" class="form-label">Zone</label>
@@ -50,8 +41,8 @@
                                 @endforeach
                             </select>
                         </div>
- 
-                         <button type="submit" class="btn btn-primary">Créer</button>
+
+                        <button type="submit" class="btn btn-primary">Créer</button>
                         <a href="{{ route('projects.index') }}" class="btn btn-secondary">Annuler</a>
                     </form>
                 </div>

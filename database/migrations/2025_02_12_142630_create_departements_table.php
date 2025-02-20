@@ -10,6 +10,8 @@ return new class extends Migration {
             $table->id();
             $table->string('name')->unique();
             $table->foreignId('chef_id')->nullable()->constrained('users')->onDelete('set null'); // Chef de Département
+            $table->foreignId('employe_id')->nullable()->constrained('users')->onDelete('set null'); // Chef de Département
+
             $table->timestamps();
         });
     }

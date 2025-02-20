@@ -47,10 +47,19 @@ Route::group(["prefix" => 'dashboard', "middleware" => ['auth']], function () {
             Route::get('/add_chef_departement', [UserController::class, 'AddChefDepartement'])->name('AddChefDepartement');
             Route::get('/add_chef_zone', [UserController::class, 'AddChefZone'])->name('AddChefZone');
             Route::get('/chef-projet', [UserController::class, 'AddChefProjet'])->name('AddChefProjet');
+            
+            Route::get('/employe-projet', [UserController::class, 'AddEmployeProjet'])->name('AddEmployeProjet');
+            Route::get('/employe-departement', [UserController::class, 'AddEmployeDepartement'])->name('AddEmployeDepartement');
+
 
             Route::post('/chef-departement', [UserController::class, 'StoreChefDepartement'])->name('StoreChefDepartement');
             Route::post('/chef-zone', [UserController::class, 'StoreChefZone'])->name('StoreChefZone');
             Route::post('/chef-projet', [UserController::class, 'StoreChefProjet'])->name('StoreChefProjet');
+
+            Route::post('/employe-projet', [UserController::class, 'StoreEmployeProjet'])->name('StoreEmployeProjet');
+            Route::post('/employe-departement', [UserController::class, 'StoreEmployeDepartement'])->name('StoreEmployeDepartement');
+
+            
         });
 
         // Gestion des contacts (Super Admin & Chef de Département)
@@ -61,12 +70,11 @@ Route::group(["prefix" => 'dashboard', "middleware" => ['auth']], function () {
         // Gestion des départements et des zones (Super Admin & Chef de Département & Chef de Zone)
         Route::resource('departements', DepartementController::class);
         Route::resource('zones', ZoneController::class);
+    });
 
-        // Gestion des projets (Accessible par les chefs de projet)
-        Route::group(['middleware' => ['role:Super Admin|Chef de Projet']], function () {
-            Route::resource('projects', ProjectController::class);
-        });
-
+    // 🌟 **Gestion des projets (Super Admin & Chef de Zone & Chef de Projet)**
+    Route::group(['middleware' => ['role:Super Admin|Chef de Zone|Chef de Projet']], function () {
+        Route::resource('projects', ProjectController::class);
     });
 
 });

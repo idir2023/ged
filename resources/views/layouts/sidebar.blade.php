@@ -6,59 +6,59 @@
             <!-- Left Menu Start -->
             <ul class="metismenu list-unstyled" id="side-menu">
 
-                <!-- Dashboard -->
-                <li>
+                <!-- 🔹 Dashboard (Accessible à Tous) -->
+                <li class="{{ request()->routeIs('root') ? 'mm-active' : '' }}">
                     <a href="{{ route('root') }}" class="waves-effect">
                         <i class="bx bx-home-circle"></i>
-                        <span key="t-contact">@lang('sidebar.dashboard')</span>
+                        <span>@lang('sidebar.dashboard')</span>
                     </a>
                 </li>
 
-                <!-- Département (Only for Super Admin & Chef de Département) -->
-                @can('manage users')
+                <!-- 🔹 Département (Super Admin & Chef de Département) -->
+                @hasanyrole('Super Admin|Chef de Département')
                 <li class="{{ request()->routeIs('departements.*') ? 'mm-active' : '' }}">
                     <a href="{{ route('departements.index') }}" class="waves-effect">
                         <i class="bx bxs-building-house"></i>
                         <span>@lang('Département')</span>
                     </a>
                 </li>
-                @endcan
+                @endhasanyrole
 
-                <!-- Zones (Only for Super Admin & Chef de Zone) -->
-                @can('manage projects')
+                <!-- 🔹 Zones (Super Admin & Chef de Zone) -->
+                @hasanyrole('Super Admin|Chef de Zone')
                 <li class="{{ request()->routeIs('zones.*') ? 'mm-active' : '' }}">
                     <a href="{{ route('zones.index') }}" class="waves-effect">
                         <i class="bx bx-map"></i>
                         <span>@lang('Ma Zones')</span>
                     </a>
                 </li>
-                @endcan
+                @endhasanyrole
 
-                <!-- Manage Users (Only for Super Admin & Chef de Département) -->
-                @can('manage users')
+                <!-- 🔹 Gestion des Utilisateurs (Super Admin & Chef de Département) -->
+                @hasanyrole('Super Admin|Chef de Département')
                 <li class="{{ request()->routeIs('manage_users.*') ? 'mm-active' : '' }}">
                     <a href="{{ route('manage_users.index') }}" class="waves-effect">
                         <i class="bx bx-group"></i>
                         <span>@lang('Manage Users')</span>
                     </a>
                 </li>
-                @endcan
+                @endhasanyrole
 
-                <!-- Projects (Only for Roles with "manage projects" Permission) -->
-                @can('manage projects')
+                <!-- 🔹 Projets (Super Admin, Chef de Projet, Chef de Zone) -->
+                @hasanyrole('Super Admin|Chef de Projet|Chef de Zone')
                 <li class="{{ request()->routeIs('projects.index') || request()->routeIs('projects.*') ? 'mm-active' : '' }}">
                     <a href="{{ route('projects.index') }}" class="waves-effect">
                         <i class="bx bx-folder-open"></i>
                         <span>@lang('Projects')</span>
                     </a>
                 </li>
-                @endcan
+                @endhasanyrole
 
-                <!-- User Profile (Visible to All Users) -->
-                <li>
+                <!-- 🔹 Profil (Accessible à Tous) -->
+                <li class="{{ request()->routeIs('profile') ? 'mm-active' : '' }}">
                     <a href="{{ route('profile') }}" class="waves-effect">
                         <i class="bx bx-user-circle"></i>
-                        <span key="t-contact">@lang('sidebar.my_profile')</span>
+                        <span>@lang('sidebar.my_profile')</span>
                     </a>
                 </li>
 

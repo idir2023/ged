@@ -23,29 +23,28 @@
                             <tr>
                                 <th>#</th>
                                 <th>Nom</th>
-                                <th>Département</th>
                                 <th>Zone</th>
                                 <th>Chef de Projet</th>
-                                 <th>Actions</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($projects as $project)
+                            @foreach ($projects as $project)
                                 <tr>
                                     <td>{{ $project->id }}</td>
                                     <td>{{ $project->name }}</td>
-                                    <td>{{ $project->departement->name ?? 'N/A' }}</td>
                                     <td>{{ $project->zone->nom }}</td>
                                     <td>{{ $project->chef->name ?? 'N/A' }}</td>
-                                     <td>
+                                    <td>
                                         <a href="{{ route('projects.edit', $project->id) }}" class="btn btn-warning btn-sm">
                                             <i class="bx bx-edit"></i> <!-- Edit icon -->
-                                         </a>
-                                        <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="d-inline">
+                                        </a>
+                                        <form action="{{ route('projects.destroy', $project->id) }}" method="POST"
+                                            class="d-inline">
                                             @csrf @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm">
                                                 <i class="bx bx-trash"></i> <!-- Delete icon -->
-                                             </button>
+                                            </button>
                                         </form>
                                     </td>
                                 </tr>

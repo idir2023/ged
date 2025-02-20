@@ -17,14 +17,14 @@
             <div class="card">
                 <div class="card-body">
                     
-                    <!-- Buttons Only Visible for Authorized Roles -->
+                    <!-- ✅ Boutons pour Ajouter des Utilisateurs (Selon les Rôles) -->
                     @can('manage users') 
                     <div class="d-flex justify-content-end mb-4 gap-2">
-                        @role('Super Admin|Chef de Département')
+                        @hasanyrole('Super Admin|Chef de Département')
                         <a href="{{ route('manage_users.create') }}" class="btn btn-rounded btn-success btn-sm">
                             <i class="bx bx-plus"></i> Ajouter un VIP
                         </a>
-                        @endrole
+                        @endhasanyrole
 
                         @role('Super Admin')
                         <a href="{{ route('AddChefDepartement') }}" class="btn btn-rounded btn-primary btn-sm">
@@ -32,21 +32,33 @@
                         </a>
                         @endrole
 
-                        @role('Super Admin|Chef de Département')
+                        @hasanyrole('Super Admin|Chef de Département')
                         <a href="{{ route('AddChefZone') }}" class="btn btn-rounded btn-info btn-sm">
                             <i class="bx bx-plus"></i> Ajouter Chef de Zone
                         </a>
-                        @endrole
+                        @endhasanyrole
 
-                        @role('Super Admin|Chef de Zone')
-                        <a href="{{ route('AddChefProjet') }}" class="btn btn-rounded btn-danger btn-sm">
+                        @hasanyrole('Super Admin|Chef de Zone')
+                        <a href="{{ route('AddChefProjet') }}" class="btn btn-rounded btn-warning btn-sm">
                             <i class="bx bx-plus"></i> Ajouter Chef de Projet
                         </a>
-                        @endrole
+                        @endhasanyrole
+
+                        @hasanyrole('Super Admin|Chef de Projet')
+                        <a href="{{ route('AddEmployeProjet') }}" class="btn btn-rounded btn-secondary btn-sm">
+                            <i class="bx bx-plus"></i> Ajouter Employé de Projet
+                        </a>
+                        @endhasanyrole
+
+                        @hasanyrole('Super Admin|Chef de Département')
+                        <a href="{{ route('AddEmployeDepartement') }}" class="btn btn-rounded btn-dark btn-sm">
+                            <i class="bx bx-plus"></i> Ajouter Employé de Département
+                        </a>
+                        @endhasanyrole
                     </div>
                     @endcan
 
-                    <!-- Users Table -->
+                    <!-- ✅ Tableau des Utilisateurs -->
                     <table class="table table-bordered w-100">
                         <thead class="table-light">
                             <tr>
@@ -66,7 +78,7 @@
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->phone ?? 'Non renseigné' }}</td>
 
-                                    <!-- Display Role Badges -->
+                                    <!-- ✅ Affichage des Rôles avec Badges Colorés -->
                                     <td>
                                         @if ($user->roles->isNotEmpty())
                                             @foreach ($user->roles as $role)
@@ -74,8 +86,8 @@
                                                     @switch($role->name)
                                                         @case('Super Admin') bg-danger @break
                                                         @case('Chef de Département') bg-primary @break
-                                                        @case('Chef de Zone') bg-warning @break
-                                                        @case('Chef de Projet') bg-success @break
+                                                        @case('Chef de Zone') bg-info @break
+                                                        @case('Chef de Projet') bg-warning @break
                                                         @case('Employé') bg-secondary @break
                                                         @default bg-light
                                                     @endswitch">
@@ -87,25 +99,33 @@
                                         @endif
                                     </td>
 
-                                    <!-- Delete Button (Only for Admins) -->
+                                    <!-- ✅ Actions (Seulement pour les Administrateurs) -->
                                     <td>
-                                        @can('manage users')
-                                        <form action="{{ route('manage_users.destroy', $user->id) }}" method="POST"
-                                            class="d-inline" onsubmit="return confirm('Confirmer la suppression ?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                <i class="bx bx-trash"></i>
-                                            </button>
-                                        </form>
-                                        @endcan
+                                        <div class="d-flex gap-2">
+                                            @can('manage users')
+                                            <!-- Bouton Modifier -->
+                                            <a href="{{ route('manage_users.edit', $user->id) }}" class="btn btn-warning btn-sm">
+                                                <i class="bx bx-edit"></i>
+                                            </a>
+
+                                            <!-- Bouton Supprimer -->
+                                            <form action="{{ route('manage_users.destroy', $user->id) }}" method="POST"
+                                                class="d-inline" onsubmit="return confirm('Confirmer la suppression ?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="bx bx-trash"></i>
+                                                </button>
+                                            </form>
+                                            @endcan
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
 
-                    <!-- Pagination -->
+                    <!-- ✅ Pagination -->
                     <div class="d-flex justify-content-center mt-3">
                         {{ $users->links() }}
                     </div>

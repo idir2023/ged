@@ -7,19 +7,52 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
-  use Illuminate\Support\Str;
+ use Illuminate\Support\Str;
+  use App\Models\Project;
+  use App\Models\Departement; // Vérifie que c'est bien le modèle correct
+
+
 
 class UserController extends Controller
 {
     /**
      * Afficher la liste des utilisateurs.
      */
-    public function index()
-    {
-        // Charger les utilisateurs avec leurs rôles
-        $users = User::with('roles')->paginate(10);
+    // public function index()
+    // {
+    //     // Charger les utilisateurs avec leurs rôles
+    //     $users = User::with('roles')->paginate(10);
+    //     return view('admin.manage_users.index', compact('users'));
+    // }
+
+    public function index() {
+        $user = auth()->user(); // Get the authenticated user
+    
+        if ($user->hasRole('Super Admin')) {
+            // Super Admin sees all users
+            $users = User::with('roles')->paginate(10);
+        } elseif ($user->hasRole('Chef de Département')) {
+            // Chef de Département sees only users in their department
+            $users = User::with('roles')
+                        ->whereHas('roles', function ($query) {
+                            $query->where('name', 'Employé');
+                        })
+                        ->paginate(10);
+        } elseif ($user->hasRole('Chef de Zone')) {
+            // Chef de Zone sees only users within projects in their zone
+            $users = User::with('roles')
+                        ->whereHas('projects', function ($query) use ($user) {
+                            $query->where('zone_id', $user->zone_id);
+                        })
+                        ->paginate(10);
+        } else {
+            // Other users have no access
+            abort(403, 'Accès interdit.');
+        }
+    
         return view('admin.manage_users.index', compact('users'));
     }
+    
 
     public function create()
     {
@@ -211,7 +244,79 @@ public function StoreChefProjet(Request $request)
     return redirect()->route('manage_users.index')->with('success', 'Chef de Projet ajouté avec succès.');
 }
 
+public function AddEmployeProjet()
+{
+    $projects = \App\Models\Project::all();
+    return view('admin.manage_users.create_employe_project', compact('projects'));
+}
+
+public function StoreEmployeProjet(Request $request) {
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|unique:users,email',
+        'phone' => 'required|string|max:20',
+        'password' => 'required|string|min:6',
+        'project_id' => 'required|exists:projects,id',
+    ]);
+
+    // ✅ Create Employee
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'phone' => $request->phone,
+        'password' => Hash::make($request->password),
+    ]);
+
  
+      // ✅ Assign Employee to Departement (One-to-One)
+         if ($user->id) {
+            $project = Project::findOrFail($request->project_id);
+            $project->employe_id = $user->id; // Assign employee
+            $project->save();
+        }
+
+    // ✅ Assign Employee Role
+    $user->assignRole('Employé');
+
+    return redirect()->route('manage_users.index')->with('success', 'Employé ajouté avec succès.');
+}
 
 
+public function AddEmployeDepartement()
+{
+    $departments = \App\Models\Departement::all();
+    return view('admin.manage_users.create_employe_dep', compact('departments'));
+}
+
+ public function StoreEmployeDepartement(Request $request) {
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|unique:users,email',
+        'phone' => 'required|string|max:20',
+        'password' => 'required|string|min:6',
+        'departement_id' => 'required|exists:departements,id',
+    ]);
+
+    // ✅ Create Employee
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'phone' => $request->phone,
+        'password' => Hash::make($request->password),
+    ]);
+
+     // ✅ Assign Employee to Departement (One-to-One)
+    if ($user->id) {
+        $departement = Departement::findOrFail($request->departement_id);
+        $departement->employe_id = $user->id; // Assign employee
+        $departement->save();
+    }
+
+    // ✅ Assign Employee Role
+    $user->assignRole('Employé');
+
+    return redirect()->route('manage_users.index')->with('success', 'Employé ajouté avec succès.');
+}
+
+  
 }
